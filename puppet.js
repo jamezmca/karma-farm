@@ -26,6 +26,7 @@
         headless: false,
         args: [
             '--incognito',
+            "--disable-notifications"
         ]
     })
     const baseUrl = 'https://www.reddit.com/'
@@ -63,21 +64,32 @@
         await page.waitForSelector('iframe')
         console.log('loaded register iframe')
 
-        // const elementHandle = await page.$('iframe[src="https://www.reddit.com/register/?experiment_d2x_2020ify_buttons=enabled&experiment_d2x_sso_login_link=enabled&experiment_d2x_google_sso_gis_parity=enabled&experiment_d2x_onboarding=enabled&actionSource=header_signup"]')
         const elementHandle = await page.$('iframe')
         const frame = await elementHandle.contentFrame()
-
-
+        await frame.waitForSelector(`input#regEmail`)
+        await frame.click(`input#regEmail`, {delay: 100});
         const input = await frame.$(`input#regEmail`)
         await input.press('Backspace')
-        await input.type(email);
-        // await frame.type('input#regEmail', email, {delay: 100})
-        // await frame.evaluate((text) => { (document.getElementById('input#regEmail')).value = text; }, email);
+        await input.type(email)
+        await page.waitForTimeout(1500)
+        await frame.click('button[data-step="email"]')
 
-        // await frame.click('input#regEmail')
-        // await frame.keyboard.type(email)
+        const inputName = await frame.$(`input#regUsername`)
+        console.log(inputName)
+        // await inputName.press('Backspace')
+        await inputName.type(`james`, { delay: 50 })
+        console.log('here')
+        // const inputPass = await frame.$(`input#regPassword`)
+        // await inputPass.press('Backspace')
+        // await inputPass.type(password)
 
-        // await frame.click('button[data-step="email"]')
+        // await page.waitForSelector('iframe[title="reCAPTCHA"]')
+        // elementHandle = await page.$('iframe[title="reCAPTCHA"]')
+        // frame = await elementHandle.contentFrame()
+        // await frame.click('.recaptcha-checkbox-border')
+
+
+
 
         await page.waitForTimeout(20000)
 
